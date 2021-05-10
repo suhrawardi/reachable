@@ -1,0 +1,9 @@
+.decl Edge(x:number, y:number)
+.decl Reachable(x:number, y:number)
+
+.input Edge(IO=file, filename="rels-by-id.csv", columns="0:1", delimiter=",")
+.output Reachable
+
+Reachable(x, y) :- Edge(x, y).
+Reachable(x, z) :- Edge(x, y), Reachable(y, z).
+
