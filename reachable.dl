@@ -5,15 +5,12 @@
 .type X = symbol
 .type Y = symbol
 
-.decl Path(p:List)
 .decl Eq(x:symbol, y:symbol)
 .decl Edge(x:X, y:Y)
 .decl Reachable(x:X, y:Y, p:List)
 .decl Member(x:X, p:List)
-.decl Output(x:X, y:Y, s:symbol, p:List)
 
 .input Edge(IO=file, filename="edges-dev.csv", columns="0:1", delimiter=",")
-.output Output(IO=file, filename="output.csv")
 .output Reachable(IO=file, filename="reachable.csv")
 
 Eq(x, x) :- Eq(_, x).
@@ -22,6 +19,4 @@ Member(y, ys) :- Member(x, xs), [y, ys] = xs, ! Eq(x, y).
 
 Reachable(x, y, p) :- Edge(x, y), p = [x, [y, nil]].
 Reachable(x, z, p) :- Edge(x, y), Reachable(y, z, p2), ! Member(x, p2), p = [x, p2].
-
-Output(x, y, s, p) :- Reachable(x, y, p2), [s, p] = p2.
 
