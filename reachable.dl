@@ -6,12 +6,15 @@
 .type Y = symbol
 
 .decl Eq(x:symbol, y:symbol)
+.decl Member(x:X, p:List)
 .decl Edge(x:X, y:Y)
 .decl Reachable(x:X, y:Y, i:number, p:List)
-.decl Member(x:X, p:List)
+.decl BufferOut(x:X, y:Y, i:number, s:symbol, p:List)
+.decl Out(x:X, y:Y, i:number, s:symbol)
 
 .input Edge(IO=file, filename="edges.csv", columns="0:1", delimiter=",")
 .output Reachable(IO=file, filename="reachable.csv", delimiter=",")
+.output Out(IO=file, filename="out.csv", delimiter=",")
 
 Eq(x, x) :- Eq(_, x).
 Eq(x, y) :- Eq(x, y).
@@ -20,4 +23,9 @@ Member(y, ys) :- Member(x, xs), [y, ys] = xs, !Eq(x, y).
 
 Reachable(x, y, 1, p) :- Edge(x, y), p = [x, [y, nil]].
 Reachable(x, z, (i2 + 1), p) :- Reachable(y, z, i2, p2), Edge(x, y), !Member(x, p2), p = [x, p2].
+
+BufferOut(x, y, i, s, p) :- Reachable(x, y, i, p2), [s, p] = p2.
+BufferOut(x, y, i, s, p) :- BufferOut(x, y, i, a, p2), [b, p] = p2, s = cat(a, cat(" -> ", b)).
+
+Out(x, y, i, s) :- BufferOut(x, y, i, s, nil).
 
