@@ -5,4 +5,4 @@
 souffle -g reachable.cpp reachable.dl
 clang++ -std=c++17 -O3 reachable.cpp -o reachable
 
-reachable
+# ./reachable
