@@ -1,9 +1,19 @@
-.decl Edge(x:symbol, y:symbol)
-.decl Reachable(x:symbol, y:symbol, n:number)
+.type List = [
+    head: symbol,
+    tail: List
+]
+.type X = symbol
+.type Y = symbol
+
+.decl Edge(x:X, y:Y)
+.decl Reachable(x:X, y:Y, p:List)
+.decl Member(x:X, p:List)
 
 .input Edge(IO=file, filename="edges.csv", columns="0:1", delimiter=",")
 .output Reachable(IO=file, filename="reachable.csv")
 
-Reachable(x, y, 1) :- Edge(x, y).
-Reachable(x, z, (n + 1)) :- Reachable(x, y, n), Edge(y, z).
+Member(x, ys) :- Member(x, xs), [x, ys] = xs.
+
+Reachable(x, y, p) :- Edge(x, y), p = [x, [y, nil]].
+Reachable(x, z, p) :- Edge(x, y), Reachable(y, z, p2), ! Member(x, p2), p = [x, p2].
 
