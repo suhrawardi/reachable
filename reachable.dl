@@ -1,9 +1,9 @@
-.decl Edge(x:number, y:number)
-.decl Reachable(x:number, y:number)
+.decl Edge(x:symbol, y:symbol)
+.decl Reachable(x:symbol, y:symbol, n:number)
 
-.input Edge(IO=file, filename="rels-by-id.csv", columns="0:1", delimiter=",")
+.input Edge(IO=file, filename="rels-by-name.csv", columns="0:1", delimiter=",")
 .output Reachable
 
-Reachable(x, y) :- Edge(x, y).
-Reachable(x, z) :- Edge(x, y), Reachable(y, z).
+Reachable(x, y, 1) :- Edge(x, y).
+Reachable(x, z, n) :- Reachable(x, y, n1), Edge(y, z), n = n1 + 1.
 
