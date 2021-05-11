@@ -7,4 +7,4 @@
 
 souffle -o reachable reachable.dl
 
-./reachable -F ./input/ -D ./output
+time ./reachable -F ./input/ -D ./output

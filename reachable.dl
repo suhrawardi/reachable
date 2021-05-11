@@ -7,16 +7,17 @@
 
 .decl Eq(x:symbol, y:symbol)
 .decl Edge(x:X, y:Y)
-.decl Reachable(x:X, y:Y, p:List)
+.decl Reachable(x:X, y:Y, i:number, p:List)
 .decl Member(x:X, p:List)
 
-.input Edge(IO=file, filename="edges-dev.csv", columns="0:1", delimiter=",")
-.output Reachable(IO=file, filename="reachable.csv")
+.input Edge(IO=file, filename="edges.csv", columns="0:1", delimiter=",")
+.output Reachable(IO=file, filename="reachable.csv", delimiter=",")
 
 Eq(x, x) :- Eq(_, x).
+Eq(x, y) :- Eq(x, y).
 
-Member(y, ys) :- Member(x, xs), [y, ys] = xs, ! Eq(x, y).
+Member(y, ys) :- Member(x, xs), [y, ys] = xs, !Eq(x, y).
 
-Reachable(x, y, p) :- Edge(x, y), p = [x, [y, nil]].
-Reachable(x, z, p) :- Edge(x, y), Reachable(y, z, p2), ! Member(x, p2), p = [x, p2].
+Reachable(x, y, 1, p) :- Edge(x, y), p = [x, [y, nil]].
+Reachable(x, z, (i2 + 1), p) :- Reachable(y, z, i2, p2), Edge(x, y), !Member(x, p2), p = [x, p2].
 
