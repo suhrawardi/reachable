@@ -5,31 +5,27 @@
 .type X = symbol
 .type Y = symbol
 
-.decl Eq(x:symbol, y:symbol)
 .decl Member(x:X, p:List)
 .decl Popularity(x:X, i:number)
-.decl Edge(x:X, y:Y)
-.decl Reachable(x:X, y:Y, i:number, p:List)
-.decl BufferOut(x:X, y:Y, i:number, s:symbol, p:List)
-.decl Out(x:X, y:Y, i:number, s:symbol)
+.decl Edge(x:X, xType:symbol, y:Y, yType:symbol)
+.decl Reachable(x:X, xType:symbol, y:Y, yType:symbol, i:number, p:List)
+.decl BufferOut(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol, p:List)
+.decl Out(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol)
 
-.input Edge(IO=file, filename="edges-dev.csv", columns="0:1", delimiter=",")
+.input Edge(IO=file, filename="edges.csv", delimiter=",")
 .output Reachable(IO=file, filename="reachable.csv", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
 
-Popularity(y, count : { Edge(_, y) }) :- Edge(_, y).
+Popularity(y, count : { Edge(_, _, y, _) }) :- Edge(_, _, y, _).
 
-Eq(x, x) :- Eq(_, x).
-Eq(x, y) :- Eq(x, y).
+Member(y, ys) :- Member(x, xs), [y, ys] = xs, x != y.
 
-Member(y, ys) :- Member(x, xs), [y, ys] = xs, !Eq(x, y).
+Reachable(x, "TA", y, yt, 1, p) :- Edge(x, "TA", y, yt), p = [x, [y, nil]].
+Reachable(x, xt, z, zt, (i2 + 1), p) :- Edge(x, xt, y, yt), Reachable(y, yt, z, zt, i2, p2), !Member(x, p2), p = [x, p2].
 
-Reachable(x, y, 1, p) :- Edge(x, y), p = [x, [y, nil]].
-Reachable(x, z, (i2 + 1), p) :- Edge(x, y), Reachable(y, z, i2, p2), !Member(x, p2), p = [x, p2].
+BufferOut(x, xt, y, yt, i, s, p) :- Reachable(x, xt, y, yt, i, p2), [s, p] = p2.
+BufferOut(x, xt, y, yt, i, s, p) :- BufferOut(x, xt, y, yt, i, a, p2), [b, p] = p2, s = cat(a, cat(" -> ", b)).
 
-BufferOut(x, y, i, s, p) :- Reachable(x, y, i, p2), [s, p] = p2.
-BufferOut(x, y, i, s, p) :- BufferOut(x, y, i, a, p2), [b, p] = p2, s = cat(a, cat(" -> ", b)).
-
-Out(x, y, i, s) :- BufferOut(x, y, i, s, nil).
+Out(x, xt, y, yt, i, s) :- BufferOut(x, xt, y, yt, i, s, nil), yt != "0".
 
