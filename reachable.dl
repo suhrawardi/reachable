@@ -13,7 +13,6 @@
 .decl Out(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol)
 
 .input Edge(IO=file, filename="edges.csv", delimiter=",")
-.output Reachable(IO=file, filename="reachable.csv", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
 
@@ -27,5 +26,6 @@ Reachable(x, xt, z, zt, (i2 + 1), p) :- Edge(x, xt, y, yt), Reachable(y, yt, z, 
 BufferOut(x, xt, y, yt, i, s, p) :- Reachable(x, xt, y, yt, i, p2), [s, p] = p2.
 BufferOut(x, xt, y, yt, i, s, p) :- BufferOut(x, xt, y, yt, i, a, p2), [b, p] = p2, s = cat(a, cat(" -> ", b)).
 
+Out(x, xt, y, "", i, s) :- BufferOut(x, xt, y, "0", i, s, nil).
 Out(x, xt, y, yt, i, s) :- BufferOut(x, xt, y, yt, i, s, nil), yt != "0".
 
