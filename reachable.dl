@@ -24,6 +24,6 @@ Reachable(x, xt, z, zt, (i + 1), [z, p]) :- Reachable(x, xt, y, yt, i, p), Edge(
 BufferOut(x, xt, y, yt, i, s, p2) :- Reachable(x, xt, y, yt, i, p), [s, p2] = p.
 BufferOut(x, xt, y, yt, i, cat(b, cat(" -> ", a)), p2) :- BufferOut(x, xt, y, yt, i, a, p), p != nil, [b, p2] = p.
 
-Out(x, xt, y, "", i2, s) :- i2 = min i : { BufferOut(x, xt, y, "0", i, s, nil) }.
-Out(x, xt, y, yt, i2, s) :- i2 = min i : { BufferOut(x, xt, y, yt, i, s, nil) }, yt != "0".
+Out(x, xt, y, "", i2, s) :- BufferOut(x, xt, y, "0", i, s, _), i = min i2 : { BufferOut(x, xt, y, "0", i2, s, nil) }.
+Out(x, xt, y, yt, i2, s) :- BufferOut(x, xt, y, yt, i, s, _), i = min i2 : { BufferOut(x, xt, y, yt, i2, s, nil) }, yt != "0".
 
