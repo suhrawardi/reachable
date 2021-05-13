@@ -7,6 +7,8 @@
 
 .decl Popularity(x:X, i:number)
 .decl Edge(x:X, xType:symbol, y:Y, yType:symbol)
+.decl Path(x:X, y:Y)
+.decl PathOut(x:X, xType:symbol, y:Y, yType:symbol, i:number)
 .decl Reachable(x:X, xType:symbol, y:Y, yType:symbol, i:number, p:List)
 .decl BufferOut(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol, p:List)
 .decl Out(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol)
@@ -14,16 +16,21 @@
 .input Edge(IO=file, filename="edges.csv", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
-// .output Reachable(IO=file, filename="reachable.csv", delimiter=",")
+.output PathOut(IO=file, filename="paths.csv", delimiter=",")
 
 Popularity(y, count : { Edge(_, _, y, _) }) :- Edge(_, _, y, _).
+
+Path(x, y) :- Edge(x, _, y, _).
+Path(x, z) :- Path(x, y), Edge(y, _, z, _).
 
 Reachable(x, "TA", y, yt, 1, [y, [x, nil]]) :- Edge(x, "TA", y, yt).
 Reachable(x, xt, z, zt, (i + 1), [z, p]) :- Reachable(x, xt, y, yt, i, p), Edge(y, yt, z, zt), y != z, i < 15.
 
+PathOut(x, xt, y, yt, i) :- Path(x, y), Reachable(x, xt, y, yt, i, _), i3 = min i2 : { Reachable(x, _, y, _, i2, _) }, i = i3.
+
 BufferOut(x, xt, y, yt, i, s, p2) :- Reachable(x, xt, y, yt, i, p), [s, p2] = p.
 BufferOut(x, xt, y, yt, i, cat(b, cat(" -> ", a)), p2) :- BufferOut(x, xt, y, yt, i, a, p), p != nil, [b, p2] = p.
 
-Out(x, xt, y, "", i2, s) :- BufferOut(x, xt, y, "0", i, s, _), i = min i2 : { BufferOut(x, xt, y, "0", i2, s, nil) }.
-Out(x, xt, y, yt, i2, s) :- BufferOut(x, xt, y, yt, i, s, _), i = min i2 : { BufferOut(x, xt, y, yt, i2, s, nil) }, yt != "0".
+Out(x, xt, y, "", i, s) :- BufferOut(x, xt, y, "0", i, s, _), i3 = min i2 : { BufferOut(x, _, y, _, i2, _, _) }, i = i3.
+Out(x, xt, y, yt, i, s) :- BufferOut(x, xt, y, yt, i, s, _), i3 = min i2 : { BufferOut(x, _, y, _, i2, _, _) }, i = i3, yt != "0".
 
