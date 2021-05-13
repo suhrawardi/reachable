@@ -25,9 +25,8 @@ T(1) :- Member(x, xs), [y, _] = xs, x = y.
 Member(x, ys) :- Member(x, xs), [y, ys] = xs, x != y.
 
 Reachable(x, xt, y, yt, 1, p) :- Edge(x, xt, y, yt), xt = "TA", p = [x, [y, nil]].
-Reachable(x, xt, z, zt, (i2 + 1), p) :- Edge(x, xt, y, yt), Reachable(y, yt, z, zt, i2, p2), ! Member(x, p2), p = [x, p2].
+Reachable(x, xt, z, zt, (i + 1), [x, p]) :- Edge(x, xt, y, yt), Reachable(y, yt, z, zt, i, p), ! Member(x, p).
 
-BufferOut(x, xt, y, yt, i, "", nil) :- Reachable(x, xt, y, yt, i, nil).
 BufferOut(x, xt, y, yt, i, s, nil) :- Reachable(x, xt, y, yt, i, p2), [s, nil] = p2.
 BufferOut(x, xt, y, yt, i, s, p) :- Reachable(x, xt, y, yt, i, p2), [s, p] = p2.
 BufferOut(x, xt, y, yt, i, cat(a, cat(" -> ", b)), p) :- BufferOut(x, xt, y, yt, i, a, p2), [b, p] = p2.
