@@ -8,23 +8,23 @@
 
 .decl Popularity(x:X, i:number) choice-domain x
 .decl Reach(x:X, i:number) choice-domain x
-.decl Relation(x:X, xt:symbol, y:Y)
-.decl Edge(x:X, xt:symbol, y:Y)
+.decl Relation(x:X, y:Y)
+.decl Edge(x:X, y:Y)
 .decl Path(x:X, y:Y, p:List, i:number) choice-domain (x, y)
 .decl BufferOut(x:X, y:Y, i:number, s:symbol, p:List)
 .decl Out(x:X, y:Y, i:number, s:symbol)
 
-.input Relation(IO=file, filename="edges.csv", columns="0:1:2", delimiter=",")
+.input Relation(IO=file, filename="edges.csv", columns="0:2", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
 .output Reach(IO=file, filename="reach.csv", delimiter=",")
 
-Popularity(y, count : { Edge(_, _, y) }) :- Edge(_, _, y).
+Popularity(y, count : { Edge(_, y) }) :- Edge(_, y).
 
-Edge(x, xt, y) :- Relation(x, xt, y), x != y.
+Edge(x, y) :- Relation(x, y), x != y.
 
-Path(x, y, [y, [x, nil]], 1) :- Edge(x, "TA", y).
-Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, _, z).
+Path(x, y, [y, [x, nil]], 1) :- Edge(x, y).
+Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z).
 
 Reach(x, count : { Path(x, _, _, _) }) :- Path(x, _, _, _).
 
