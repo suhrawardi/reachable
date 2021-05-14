@@ -26,7 +26,7 @@ A("KnkProject").
 Edge(x, y) :- Relation(x, y), x != y.
 
 Path(x, y, [y, [x, nil]], 1) :- A(x), Edge(x, y).
-Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z), i < 4.
+Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z), i < 9.
 
 ShortestPathLen(x, y, min i: { Path(x, y, _, i) }) :- Path(x, y, _, _).
 
@@ -35,5 +35,5 @@ ShortestPath(x, y, p, i) :- Path(x, y, p, i), ShortestPathLen(x, y, i).
 BufferOut(x, y, i, s, p) :- ShortestPath(x, y, p2, i), [s, p] = p2.
 BufferOut(x, y, i, cat(b, cat(" -> ", a)), p) :- BufferOut(x, y, i, a, p2), p2 != nil, [b, p] = p2.
 
-Out(x, y, i, s) :- BufferOut(x, y, i, s, _).
+Out(x, y, i, s) :- BufferOut(x, y, i, s, nil).
 
