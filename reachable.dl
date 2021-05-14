@@ -8,7 +8,7 @@
 .decl A(x:symbol)
 .decl Popularity(x:X, i:number)
 .decl Relation(x:X, y:Y)
-.decl Edge(x:X, y:Y)
+.decl Edge(x:X, y:Y) choice-domain y
 .decl Path(x:X, y:Y, p:List, i:number)
 .decl ShortestPath(x:X, y:Y, p:List, i:number)
 .decl ShortestPathLen(x:X, y:Y, i:number)
@@ -26,7 +26,7 @@ A("KnkProject").
 Edge(x, y) :- Relation(x, y), x != y.
 
 Path(x, y, [y, [x, nil]], 1) :- A(x), Edge(x, y).
-Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z), i < 9.
+Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z).
 
 ShortestPathLen(x, y, min i: { Path(x, y, _, i) }) :- Path(x, y, _, _).
 
