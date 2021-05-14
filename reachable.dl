@@ -2,35 +2,41 @@
     head: symbol,
     tail: List
 ]
+
 .type X = symbol
 .type Y = symbol
 
-.decl A(x:symbol)
 .decl Popularity(x:X, i:number)
-.decl Relation(x:X, y:Y)
+.decl Reach(x:X, i:number)
+.decl Relation(x:X, xt:symbol, y:Y)
 .decl Edge(x:X, y:Y) choice-domain y
 .decl Path(x:X, y:Y, p:List, i:number)
 .decl ShortestPath(x:X, y:Y, p:List, i:number)
 .decl ShortestPathLen(x:X, y:Y, i:number)
+.decl ShortestOut(x:X, y:Y, i:number)
 .decl BufferOut(x:X, y:Y, i:number, s:symbol, p:List)
 .decl Out(x:X, y:Y, i:number, s:symbol)
 
-.input Relation(IO=file, filename="edges.csv", columns="0:2", delimiter=",")
+.input Relation(IO=file, filename="edges.csv", columns="0:1:2", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
+.output ShortestOut(IO=file, filename="shortest-out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
+.output Reach(IO=file, filename="reach.csv", delimiter=",")
 
 Popularity(y, count : { Edge(_, y) }) :- Edge(_, y).
 
-A("KnkProject").
+Edge(x, y) :- Relation(x, "TA", y), x != y.
 
-Edge(x, y) :- Relation(x, y), x != y.
-
-Path(x, y, [y, [x, nil]], 1) :- A(x), Edge(x, y).
+Path(x, y, [y, [x, nil]], 1) :- Edge(x, y).
 Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z).
 
 ShortestPathLen(x, y, min i: { Path(x, y, _, i) }) :- Path(x, y, _, _).
 
 ShortestPath(x, y, p, i) :- Path(x, y, p, i), ShortestPathLen(x, y, i).
+
+Reach(x, count : { ShortestPath(x, _, _, _) }) :- ShortestPath(x, _, _, _).
+
+ShortestOut(x, y, i) :- ShortestPath(x, y, _, i).
 
 BufferOut(x, y, i, s, p) :- ShortestPath(x, y, p2, i), [s, p] = p2.
 BufferOut(x, y, i, cat(b, cat(" -> ", a)), p) :- BufferOut(x, y, i, a, p2), p2 != nil, [b, p] = p2.
