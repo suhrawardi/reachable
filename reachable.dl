@@ -6,14 +6,14 @@
 .type X = symbol
 .type Y = symbol
 
-.decl Popularity(x:X, i:number)
-.decl Reach(x:X, i:number)
+.decl Popularity(x:X, i:number) choice-domain x
+.decl Reach(x:X, i:number) choice-domain x
 .decl Relation(x:X, xt:symbol, y:Y)
-.decl Edge(x:X, y:Y) choice-domain y
-.decl Path(x:X, y:Y, p:List, i:number)
-.decl ShortestPath(x:X, y:Y, p:List, i:number)
-.decl ShortestPathLen(x:X, y:Y, i:number)
-.decl ShortestOut(x:X, y:Y, i:number)
+.decl Edge(x:X, xt:symbol, y:Y)
+.decl Path(x:X, y:Y, p:List, i:number) choice-domain (x, y)
+.decl ShortestPath(x:X, y:Y, p:List, i:number) choice-domain (x, y)
+.decl ShortestPathLen(x:X, y:Y, i:number) choice-domain (x, y)
+.decl ShortestOut(x:X, y:Y, i:number) choice-domain (x, y)
 .decl BufferOut(x:X, y:Y, i:number, s:symbol, p:List)
 .decl Out(x:X, y:Y, i:number, s:symbol)
 
@@ -23,12 +23,12 @@
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
 .output Reach(IO=file, filename="reach.csv", delimiter=",")
 
-Popularity(y, count : { Edge(_, y) }) :- Edge(_, y).
+Popularity(y, count : { Edge(_, _, y) }) :- Edge(_, _, y).
 
-Edge(x, y) :- Relation(x, "TA", y), x != y.
+Edge(x, xt, y) :- Relation(x, xt, y), x != y.
 
-Path(x, y, [y, [x, nil]], 1) :- Edge(x, y).
-Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, z).
+Path(x, y, [y, [x, nil]], 1) :- Edge(x, "TA", y).
+Path(x, z, [z, p], (i + 1)) :- Path(x, y, p, i), Edge(y, _, z).
 
 ShortestPathLen(x, y, min i: { Path(x, y, _, i) }) :- Path(x, y, _, _).
 
