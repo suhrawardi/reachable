@@ -7,12 +7,12 @@
 
 .decl Popularity(x:X, i:number)
 .decl Edge(x:X, xType:symbol, y:Y, yType:symbol)
-.decl Path(x:X, y:Y, i:number)
-.decl ShortestPath(x:X, y:Y, i:number)
+.decl Path(x:X, y:Y, p:List, i:number)
+.decl ShortestPath(x:X, y:Y, p:List, i:number)
 .decl ShortestPathLen(x:X, y:Y, i:number)
 // .decl BufferOut(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol, p:List)
 // .decl Out(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol)
-.decl Out(x:X, y:Y, i:number)
+.decl Out(x:X, y:Y, p:List, i:number)
 
 .input Edge(IO=file, filename="edges.csv", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
@@ -20,14 +20,14 @@
 
 Popularity(y, count : { Edge(_, _, y, _) }) :- Edge(_, _, y, _).
 
-Path(x, y, 1) :- Edge(x, "TA", y, _).
-Path(x, z, (i + 1)) :- Path(x, y, i), Edge(y, _, z, _).
+Path(x, y, [y, [x, nil]], 1) :- Edge(x, "TA", y, _).
+Path(x, z, p, (i + 1)) :- Path(x, y, p2, i), Edge(y, _, z, _), p = [z, p2], i < 15.
 
-ShortestPathLen(x, y, min i: { Path(x, y, i) }) :- Path(x, y, _).
+ShortestPathLen(x, y, min i: { Path(x, y, _, i) }) :- Path(x, y, _, _).
 
-ShortestPath(x, y, i) :- Path(x, y, i).
+ShortestPath(x, y, p, i) :- Path(x, y, p, i).
 
-Out(x, y, i) :- ShortestPath(x, y, i).
+Out(x, y, p, i) :- ShortestPath(x, y, p, i).
 
 // PathOut(x, xt, y, yt, i) :- Path(x, y), Reachable(x, xt, y, yt, i, _), i3 = min i2 : { Reachable(x, _, y, _, i2, _) }, i = i3.
 
