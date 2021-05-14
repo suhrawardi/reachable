@@ -7,30 +7,33 @@
 
 .decl Popularity(x:X, i:number)
 .decl Edge(x:X, xType:symbol, y:Y, yType:symbol)
-.decl Path(x:X, y:Y)
-.decl PathOut(x:X, xType:symbol, y:Y, yType:symbol, i:number)
-.decl Reachable(x:X, xType:symbol, y:Y, yType:symbol, i:number, p:List)
-.decl BufferOut(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol, p:List)
-.decl Out(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol)
+.decl Path(x:X, y:Y, i:number)
+.decl ShortestPath(x:X, y:Y, i:number)
+.decl ShortestPathLen(x:X, y:Y, i:number)
+// .decl BufferOut(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol, p:List)
+// .decl Out(x:X, xT:symbol, y:Y, yT:symbol, i:number, s:symbol)
+.decl Out(x:X, y:Y, i:number)
 
 .input Edge(IO=file, filename="edges.csv", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
-.output PathOut(IO=file, filename="paths.csv", delimiter=",")
 
 Popularity(y, count : { Edge(_, _, y, _) }) :- Edge(_, _, y, _).
 
-Path(x, y) :- Edge(x, _, y, _).
-Path(x, z) :- Path(x, y), Edge(y, _, z, _).
+Path(x, y, 1) :- Edge(x, "TA", y, _).
+Path(x, z, (i + 1)) :- Path(x, y, i), Edge(y, _, z, _).
 
-Reachable(x, "TA", y, yt, 1, [y, [x, nil]]) :- Edge(x, "TA", y, yt).
-Reachable(x, xt, z, zt, (i + 1), [z, p]) :- Reachable(x, xt, y, yt, i, p), Edge(y, yt, z, zt), y != z, i < 15.
+ShortestPathLen(x, y, min i: { Path(x, y, i) }) :- Path(x, y, _).
 
-PathOut(x, xt, y, yt, i) :- Path(x, y), Reachable(x, xt, y, yt, i, _), i3 = min i2 : { Reachable(x, _, y, _, i2, _) }, i = i3.
+ShortestPath(x, y, i) :- Path(x, y, i).
 
-BufferOut(x, xt, y, yt, i, s, p2) :- Reachable(x, xt, y, yt, i, p), [s, p2] = p.
-BufferOut(x, xt, y, yt, i, cat(b, cat(" -> ", a)), p2) :- BufferOut(x, xt, y, yt, i, a, p), p != nil, [b, p2] = p.
+Out(x, y, i) :- ShortestPath(x, y, i).
 
-Out(x, xt, y, "", i, s) :- BufferOut(x, xt, y, "0", i, s, _), i3 = min i2 : { BufferOut(x, _, y, _, i2, _, _) }, i = i3.
-Out(x, xt, y, yt, i, s) :- BufferOut(x, xt, y, yt, i, s, _), i3 = min i2 : { BufferOut(x, _, y, _, i2, _, _) }, i = i3, yt != "0".
+// PathOut(x, xt, y, yt, i) :- Path(x, y), Reachable(x, xt, y, yt, i, _), i3 = min i2 : { Reachable(x, _, y, _, i2, _) }, i = i3.
+
+// BufferOut(x, xt, y, yt, i, s, p2) :- Reachable(x, xt, y, yt, i, p), [s, p2] = p.
+// BufferOut(x, xt, y, yt, i, cat(b, cat(" -> ", a)), p2) :- BufferOut(x, xt, y, yt, i, a, p), p != nil, [b, p2] = p.
+
+// Out(x, xt, y, "", i, s) :- BufferOut(x, xt, y, "0", i, s, _), i3 = min i2 : { BufferOut(x, _, y, _, i2, _, _) }, i = i3.
+// Out(x, xt, y, yt, i, s) :- BufferOut(x, xt, y, yt, i, s, _), i3 = min i2 : { BufferOut(x, _, y, _, i2, _, _) }, i = i3, ord(yt) != ord("0").
 
