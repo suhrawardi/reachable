@@ -14,7 +14,7 @@
 .decl BufferOut(x:X, y:Y, i:number, s:symbol, p:List)
 .decl Out(x:X, y:Y, i:number, s:symbol)
 
-.input Relation(IO=file, filename="edges.csv", columns="0:2", delimiter=",")
+.input Relation(IO=file, filename="edges.csv", delimiter=",")
 .output Out(IO=file, filename="out.csv", delimiter=",")
 .output Popularity(IO=file, filename="popularity.csv", delimiter=",")
 .output Reach(IO=file, filename="reach.csv", delimiter=",")
