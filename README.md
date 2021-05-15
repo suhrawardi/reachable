@@ -1,16 +1,23 @@
 # Reachable
 
+Generates some csv files with popularity, reach and shortest paths of some
+network nodes.
+There is an example input file [./input/edges.csv](./input/edges.csv) which you
+can replace.
+
+## Requirements
+
+You need to install [Souffle](https://souffle-lang.github.io/).
+The ./run.sh script works on my Mac but the C++ compilation might fail on other
+machines.
+
 
 ## Howto?
 
 
-Add a file called `edges.csv` in the root directory and compile:
+Replace the file called [edges.csv](./input/edges.csv) in the input directory
+and run:
 
     $ ./run.sh
 
-You can then run the program:
-
-    $ ./reachable
-
-A new csv file called reachable.csv is generated in the root dir, with 
-a list of which nodes are reachable from a given node.
+Some csv files are placed in the [output](./output) directory.
